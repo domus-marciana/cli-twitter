@@ -38,6 +38,7 @@ public class CliTweet
 			"d: Send a direct message." + "\n" +
 			"t[m|o] [Another user's name if needed]: Show the timeline of the authenticated user (m), another user (o), or the user's friends (nothing)." + "\n" +
 			"f [Username]: Find another user." + "\n" +
+			"r: Reply to the mentions received." + "\n" +
 			"s: Logout and delete the current user's data." + "\n" +
 			"h: Display this help message." + "\n" +
 			"q: Exit." + "\n"
@@ -150,6 +151,28 @@ public class CliTweet
 			case 'h':
 				printHelp();
 				break;
+			case 'r':
+				tc.listMentions();
+				int id; String msg;
+				System.out.print("Which mention do you want to reply to? ");
+				try
+				{
+					id = Integer.parseInt(in.readLine());
+					System.out.print("Type your message: ");
+					msg = in.readLine();
+				}
+				catch(NumberFormatException nfe)
+				{
+					System.out.println("Illegal input!");
+					return;
+				}
+				catch(IOException ioe)
+				{
+					System.out.println("An I/O Exception occurred.");
+					return;
+				}
+				
+				System.out.print("Successfully updated your status message to: " + tc.sendReplyMsg(id, msg));
 			default:
 				System.out.println("Unrecognized command. Type h for help.");
 				break;
