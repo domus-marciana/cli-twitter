@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Iterator;
+import java.io.*;
 import java.util.List;
 
 import twitter4j.DirectMessage;
@@ -29,13 +30,25 @@ public class TwitterController
 	{
 		int counter = 0;
 		List<User> followersList = twitter.getFollowers(username);
-		
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		Iterator<User> iterator = followersList.iterator();
 		while (iterator.hasNext())
 		{
 			User u = iterator.next();
 			if(u.getStatusText() == null) System.out.println(++counter + " " + printUser(u));
 			else System.out.println(++counter + " " + printUser(u) + ": " + u.getStatusText());
+			if(counter % 10 == 0)
+			{
+				System.out.print("Hit [Enter] to continue, or type q to break: ");
+				String str = null;
+				try {
+					str = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(str.length() > 0 && (str.charAt(0) == 'Q' || str.charAt(0) == 'q')) return;
+			}
 		}
 	}
 	
@@ -43,14 +56,60 @@ public class TwitterController
 	{
 		int counter = 0;
 		List<User> followingList = twitter.getFriends(username);
-		
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		Iterator<User> iterator = followingList.iterator();
 		while (iterator.hasNext())
 		{
 			User u = iterator.next();
 			if(u.getStatusText() == null) System.out.println(++counter + " " + printUser(u));
 			else System.out.println(++counter + " " + printUser(u) + ": " + u.getStatusText());
+			if(counter % 10 == 0)
+			{
+				System.out.print("Hit [Enter] to continue, or type q to break: ");
+				String str = null;
+				try {
+					str = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(str.length() > 0 && (str.charAt(0) == 'Q' || str.charAt(0) == 'q')) return;
+			}
 		}
+	}
+	
+	public void listMentions() throws TwitterException
+	{
+		int counter = 0;
+		List<Status> mentions = twitter.getMentions();
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		Iterator<Status> iterator = mentions.iterator();
+		while (iterator.hasNext())
+		{
+			Status s = iterator.next();
+			System.out.println(++counter + " [" + s.getCreatedAt().toString() + "] " + printUser(s.getUser()) + ": " + s.getText());
+			if(counter % 10 == 0)
+			{
+				System.out.print("Hit [Enter] to continue, or type q to break: ");
+				String str = null;
+				try {
+					str = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(str.length() > 0 && (str.charAt(0) == 'Q' || str.charAt(0) == 'q')) return;
+			}
+		}
+	}
+	
+	public String sendReplyMsg(int id, String msg) throws TwitterException
+	{
+		List<Status> mentions = twitter.getMentions();
+		String mtStr = "@" + mentions.get(id-1).getUser().getScreenName();
+		if(msg.indexOf(mtStr) == -1) msg = mtStr + " " + msg;
+		this.updateStatus(msg);
+		return msg;
 	}
 	
 	public void findUser(String uname) throws TwitterException
@@ -68,19 +127,31 @@ public class TwitterController
 	{
 		int counter = 0;
 		List<Status> statusList = twitter.getUserTimeline();
-		
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		Iterator<Status> iterator = statusList.iterator();
 		while(iterator.hasNext())
 		{
 			Status s = iterator.next();
 			System.out.println(++counter + " [" + s.getCreatedAt().toString() + "] " + s.getText());
+			if(counter == 10)
+			{
+				System.out.print("Hit [Enter] to continue, or type q to break: ");
+				String str = null;
+				try {
+					str = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(str.length() > 0 && (str.charAt(0) == 'Q' || str.charAt(0) == 'q')) return;
+			}
 		}
 	}
 	
 	public void getOthersTimeline(String uname) throws TwitterException
 	{
 		User user = twitter.getUserDetail(uname);
-		
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println(printUser(user));
 		
 		List<Status> statusList = twitter.getUserTimeline(uname);
@@ -91,6 +162,18 @@ public class TwitterController
 		{
 			Status s = iterator.next();
 			System.out.println(++counter + " [" + s.getCreatedAt().toString() + "] " + s.getText());
+			if(counter % 10 == 0)
+			{
+				System.out.print("Hit [Enter] to continue, or type q to break: ");
+				String str = null;
+				try {
+					str = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(str.length() > 0 && (str.charAt(0) == 'Q' || str.charAt(0) == 'q')) return;
+			}
 		}
 	}
 	
@@ -98,7 +181,7 @@ public class TwitterController
 	{
 		List<Status> statusList = null;
 		int counter = 0;
-		
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		statusList = twitter.getFriendsTimeline();
 		
 		Iterator<Status> iterator = statusList.iterator();
@@ -106,6 +189,18 @@ public class TwitterController
 		{
 			Status s = iterator.next();
 			System.out.println(++counter + " [" + s.getCreatedAt().toString() + "] " + printUser(s.getUser()) + ": " + s.getText());
+			if(counter % 10 == 0)
+			{
+				System.out.print("Hit [Enter] to continue, or type q to break: ");
+				String str = null;
+				try {
+					str = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(str.length() > 0 && (str.charAt(0) == 'Q' || str.charAt(0) == 'q')) return;
+			}
 		}
 	}
 	
@@ -120,8 +215,7 @@ public class TwitterController
 	
 	public void sendDirectMessage(int uid, String text) throws TwitterException
 	{
-		List<User> followersList = null;
-		followersList = twitter.getFollowers();
+		List<User> followersList = twitter.getFollowers();
 		
 		String uname = followersList.get(uid-1).getScreenName();
 		twitter.sendDirectMessage(uname, text);
@@ -133,7 +227,7 @@ public class TwitterController
 	{
 		List<DirectMessage> statusList = null;
 		int counter = 0;
-
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		statusList = twitter.getDirectMessages();
 		
 		Iterator<DirectMessage> iterator = statusList.iterator();
@@ -142,6 +236,18 @@ public class TwitterController
 			DirectMessage s = iterator.next();
 			System.out.println(++counter + " [" + s.getCreatedAt().toString() + "] " + printUser(s.getSender()) + " to "
 					+ printUser(s.getRecipient()) + ": " + s.getText());
+			if(counter % 10 == 0)
+			{
+				System.out.print("Hit [Enter] to continue, or type q to break: ");
+				String str = null;
+				try {
+					str = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(str.length() > 0 && (str.charAt(0) == 'Q' || str.charAt(0) == 'q')) return;
+			}
 		}
 	}
 	
