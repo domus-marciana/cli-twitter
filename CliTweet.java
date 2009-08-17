@@ -62,7 +62,19 @@ public class CliTweet
 			"r: Reply to the mentions received." + "\n" +
 			"s: Logout and delete the current user's data." + "\n" +
 			"h: Display this help message." + "\n" +
+			"n: Display the license message." + "\n" +
 			"q: Exit." + "\n"
+			);
+	}
+
+	public static void printLicense()
+	{
+		System.out.print(
+			"CliTweet (cli-twitter) is licensed under the GNU General Public License." + "\n" +
+			"For a copy of the GNU GPL, see <http://www.gnu.org/copyleft/gpl.html>." + "\n" +
+			"Twitter4j (by Yusuke Yamamoto) is the library used in this program." + "\n" +
+			"For a copy of twitter4j, see <http://yusuke.homeip.net/>." + "\n" +
+			"Twitter4j is licensed under the BSD License. It is NOT included in the source code of this program. However, the binary files are released with this JAR file. This version of the library is re-licensed under the GNU General Public License, as permitted by the BSD License." + "\n"
 			);
 	}
 	
@@ -81,6 +93,9 @@ public class CliTweet
 			{
 			case 'q':
 				quitMe();
+				break;
+			case 'n':
+				printLicense();
 				break;
 			case 'u':
 				if(command.length() < 3) { System.out.print("Update your status message to: "); try {
@@ -179,10 +194,12 @@ public class CliTweet
 			case 'r':
 				tc.listMentions();
 				int id; String msg;
-				System.out.print("Which mention do you want to reply to? ");
+				System.out.print("Which mention do you want to reply to (q to break)? ");
 				try
 				{
-					id = Integer.parseInt(in.readLine());
+					String line=in.readLine();
+					if(line.charAt(0)=='q' || line.charAt(0)=='Q') return;
+					id = Integer.parseInt(line);
 					System.out.print("Type your message: ");
 					msg = in.readLine();
 				}
@@ -198,6 +215,7 @@ public class CliTweet
 				}
 				
 				System.out.print("Successfully updated your status message to: " + tc.sendReplyMsg(id, msg));
+				break;
 			default:
 				System.out.println("Unrecognized command. Type h for help.");
 				break;
@@ -220,7 +238,7 @@ public class CliTweet
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
 		while(true) {
-			System.out.print(tc.getUsername() + ">");
+			System.out.print(tc.getUsername() + "> ");
 			
 			try {
 				command = in.readLine();
