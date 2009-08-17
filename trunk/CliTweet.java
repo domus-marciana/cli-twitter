@@ -19,6 +19,7 @@
 */
 
 package main;
+
 import java.io.*;
 
 import twitter4j.*;
@@ -67,6 +68,10 @@ public class CliTweet
 	
 	public static void processCommand(String command)
 	{
+		// System.out.println("DEBUG: command.length() == " + command.length());
+
+		if(command.length() == 0) return;
+	
 		String yn = "";
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		

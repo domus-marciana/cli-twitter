@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<project name="Cli-Twitter" default="compile">
+	<property file="build.properties" />
+
+	<path id="project.class.path">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement path="${java.class.path}" />
+	</path>
+
+	<target name="clean" description="Remove class files">
+		<delete dir="classes/main" />
+	</target>
+
+	<target name="clobber" depends="clean" description="Remove obsolete JAR files">
+		<delete file="${projectname}-${version}.jar" />
+	</target>
+
+	<target name="compile" description="Compile to class files">
+		<mkdir dir="classes" />
+		<javac srcdir="." destdir="classes">
+			<classpath refid="project.class.path" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="Create JAR file">
+		<jar destfile="${projectname}-${version}.jar">
+			<fileset dir="classes" includes="**/*.class" />
+			<manifest>
+				<attribute name="Main-Class" value="main/CliTweet" />
+			</manifest>
+		</jar>
+	</target>
+</project>
